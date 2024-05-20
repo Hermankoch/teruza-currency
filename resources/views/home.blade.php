@@ -59,6 +59,14 @@
                         url: '{{ route('getRates') }}',
                         method: 'GET',
                         success: function (data) {
+                            if (data.rates['errors'])
+                            {
+                                let error = '';
+                                $.each(data.rates['errors'], function (code, e) {
+                                    error += e;
+                                });
+                                alert(error);
+                            }
                             let currencyOptions = [];
                             let rates = data.rates.forex;
                             let table = '<tr><th>Currency</th><th>Rate</th></tr>';
@@ -96,11 +104,24 @@
                     alert('Please enter a valid amount.');
                     return;
                 }
+                if (currency == '' || currency == null)
+                {
+                    alert('You have to load the rates first to get all currencies.');
+                    return;
+                }
 
                 $.ajax({
                     url: '{{ route('getRates') }}',
                     method: 'GET',
                     success: function (data) {
+                        if (data.rates['errors'])
+                        {
+                            let error = '';
+                            $.each(data.rates['errors'], function (code, e) {
+                                error += e;
+                            });
+                            alert(error);
+                        }
                         let rates = data.rates.forex;
                         let rateKey = `ZAR_${currency}`;
                         let inverseRateKey = `${currency}_ZAR`;
@@ -111,7 +132,7 @@
                             return;
                         }
                         let convertedAmount = rate * amount;
-                        $('#conversionResult').text(`Converted Amount: ${convertedAmount.toFixed(2)} ${currency}`);
+                        $('#conversionResult').text(`Converted Amount: ${convertedAmount.toFixed(2)} ZAR`);
                     }
                 });
             }
